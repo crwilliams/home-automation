@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="horizontal"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text=""
+            android:width="70dp"
+            android:id="@+id/text_room_name"/>
+    <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/state_on"
+            android:width="40dp"
+            android:id="@+id/button_on" android:onClick="button"/>
+    <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/state_off"
+            android:width="40dp"
+            android:id="@+id/button_off" android:onClick="button"/>
+    <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/level_low"
+            android:width="20dp"
+            android:id="@+id/button_low" android:onClick="button"/>
+    <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/level_medium"
+            android:width="20dp"
+            android:id="@+id/button_medium" android:onClick="button"/>
+    <Button
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/level_high"
+            android:width="20dp"
+            android:id="@+id/button_high" android:onClick="button"/>
+    <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/text_update_time"/>
+
+</LinearLayout>

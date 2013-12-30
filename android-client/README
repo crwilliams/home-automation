@@ -1,0 +1,6 @@
+All configuration should be done via src/uk/co/crwilliams/opensource/MyHomeApp/Constants.java
+
+Contains code from:
+	AWS SDK for Android (Copyright 2010-2013 Amazon.com, Inc. or its affiliates, used under Apache 2.0 license)
+	Android Support Library (Copyright 2005-2008, The Android Open Source Project, used under Apache 2.0 license)
+	

@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">MyHomeApp</string>
+    <string name="state_on">On</string>
+    <string name="state_off">Off</string>
+    <string name="level_high">H</string>
+    <string name="level_medium">M</string>
+    <string name="level_low">L</string>
+</resources>
