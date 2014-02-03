@@ -19,12 +19,12 @@ class Constants(object):
         'pir': (6, 0, None),
         'lamp': ('A', 1, 'HomeEasy'),
         'socket1': ('A', 2, 'HomeEasy'),
-        'socket2': ('A', 3, 'HomeEasy')
+        'socket2': ('A', 3, 'HomeEasy'),
     }
     rules = [
         # (trigger-room, trigger-value, response-room, response-value)
         ('pir', 'True', 'lamp', 'on'),
-        ('pir', 'False', 'lamp', 'off')
+        ('pir', 'False', 'lamp', 'off'),
     ]
     values = {
         'SwitchMultilevel': ['off', 'on', '30', '40', '50', '60', '70', '80'],
