@@ -25,6 +25,8 @@ class Constants(object):
         # (trigger-room, trigger-value, response-room, response-value)
         ('pir', 'True', 'lamp', 'on'),
         ('pir', 'False', 'lamp', 'off'),
+        ('day_or_night', 'night', 'lamp', 'on'),
+        ('day_or_night', 'night', 'lamp', 'off'),
     ]
     values = {
         'SwitchMultilevel': ['off', 'on', '30', '40', '50', '60', '70', '80'],

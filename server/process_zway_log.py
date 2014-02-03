@@ -15,6 +15,7 @@ from boto.sqs.message import RawMessage
 from xml.sax.saxutils import XMLGenerator
 
 from constants import Constants
+import ephem
 
 
 class ServerThread(threading.Thread):
@@ -133,10 +134,40 @@ class ExternalQueueReaderThread(threading.Thread):
                 self.remote_queue.delete_message(m)
 
 
+class EphemerisThread(threading.Thread):
+
+    def __init__(self, queue, city):
+        threading.Thread.__init__(self)
+        self.queue = queue
+        
+        self.sun = ephem.Sun()
+        self.location = ephem.city(city)
+        
+    def day_or_night(self):
+        self.sun.compute()
+        nr = self.location.next_rising(self.sun)
+        ns = self.location.next_setting(self.sun)
+        if(nr < ns):
+            return 'night'
+        else:
+            return 'day'
+
+    def run(self):
+        while True:
+            new_day_or_night = self.day_or_night()
+            if(new_day_or_night != State().day_or_night):
+                State().day_or_night = new_day_or_night
+                for rule in Constants.rules:
+                    if rule[0] == 'day_or_night' and rule[1] == new_day_or_night:
+                        self.queue.put((rule[2], rule[3]))
+            sleep(10)
+
+
 class State(object):
     
     _instance = None
     rooms = None
+    day_or_night = None
     init = None
     
     def __new__(cls):
@@ -394,6 +425,7 @@ def main():
     StandardInputReaderThread(input_queue, output_queue).start()
     ExternalQueueReaderThread(input_queue).start()
     OutboundThread(output_queue).start()
+    EphemerisThread(input_queue).start()
 
     for room, room_config in Constants.config.iteritems():
         if room_config[2] == 'HomeEasy':
