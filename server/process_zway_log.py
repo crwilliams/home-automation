@@ -189,6 +189,7 @@ class State(object):
     def get_dict(self):
         return {
             'rooms': dict(self.rooms),
+            'day_or_night': self.day_or_night,
         }
 
     def log_init(self):
