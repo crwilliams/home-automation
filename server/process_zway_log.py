@@ -433,7 +433,7 @@ def main():
     StandardInputReaderThread(input_queue, output_queue).start()
     ExternalQueueReaderThread(input_queue).start()
     OutboundThread(output_queue).start()
-    EphemerisThread(input_queue).start()
+    EphemerisThread(input_queue, 'London').start()
 
     for room, room_config in Constants.config.iteritems():
         if room_config[2] == 'HomeEasy':
