@@ -168,7 +168,7 @@ class EphemerisThread(threading.Thread):
                             rule[0] + ' ' + rule[1] + ' triggers ' +
                             rule[2] + ' ' + rule[3])
                         self.queue.put((rule[2], rule[3]))
-            sleep(10)
+            time.sleep(10)
 
 
 class State(object):
