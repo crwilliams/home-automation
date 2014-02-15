@@ -40,7 +40,6 @@ class OutboundThread(threading.Thread):
     def run(self):
         while True:
             message = self.queue.get(True)
-            print message
             send_push(message[0], message[1], message[2], message[3])
 
 
@@ -54,6 +53,9 @@ class StandardInputReaderThread(threading.Thread):
     def process_rules(self, room_name, value):
         for rule in Constants.rules:
             if rule[0] == room_name and rule[1] == value:
+                print (
+                    rule[0] + ' ' + rule[1] + ' triggers ' +
+                    rule[2] + ' ' + rule[3])
                 self.in_queue.put((rule[2], rule[3]))
 
     def run(self):    
@@ -98,14 +100,16 @@ class StandardInputReaderThread(threading.Thread):
                     if State().is_init() and (
                             previous_update_value != match_dict['value'] or (
                             current_update_time - previous_update_time) > 10):
+                        if room_name == 'philio-fix':
+                            philio_fix(match_dict['device'])
+                            continue
                         self.process_rules(room_name, match_dict['value'])
                         self.out_queue.put((
                             room_name, match_dict['value'],
                             Constants.config[room_name][2],
                             int(current_update_time)))
                 else:
-                    print key + ': ' + str(match_dict)
-                    sys.exit()
+                    print 'Error processing ' + key + ': ' + str(match_dict)
 
 
 class ExternalQueueReaderThread(threading.Thread):
@@ -157,8 +161,12 @@ class EphemerisThread(threading.Thread):
             new_day_or_night = self.day_or_night()
             if(new_day_or_night != State().day_or_night):
                 State().day_or_night = new_day_or_night
+                print 'day/night state is now ' + new_day_or_night
                 for rule in Constants.rules:
                     if rule[0] == 'day_or_night' and rule[1] == new_day_or_night:
+                        print (
+                            rule[0] + ' ' + rule[1] + ' triggers ' +
+                            rule[2] + ' ' + rule[3])
                         self.queue.put((rule[2], rule[3]))
             sleep(10)
 
@@ -403,7 +411,6 @@ def send_push(room, value, room_type, timestamp):
             'room': room, 'value': value, 'type': room_type, 'time': timestamp}
         })
     })
-    print json_string
     c.publish(
         Constants.aws_sns_topic,
         json_string,
