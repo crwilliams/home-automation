@@ -365,6 +365,13 @@ $(document).ready( function() {
         w.endElement('script')
 
 
+def philio_fix(device):
+    for instance in [2, 3]:
+        url = 'http://127.0.0.1:8083/ZWaveAPI/Run/devices[' + str(
+            device) + '].instances[' + str(instance) + '].commandClasses[37].Get()'
+        urllib2.urlopen(url)
+
+
 def set_lights(room, action):
 
     if room in Constants.config.keys():
