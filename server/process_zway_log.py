@@ -159,7 +159,7 @@ class EphemerisThread(threading.Thread):
     def run(self):
         while True:
             new_day_or_night = self.day_or_night()
-            if(new_day_or_night != State().day_or_night):
+            if new_day_or_night != State().day_or_night:
                 State().day_or_night = new_day_or_night
                 print 'day/night state is now ' + new_day_or_night
                 for rule in Constants.rules:
