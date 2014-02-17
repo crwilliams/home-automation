@@ -58,7 +58,7 @@ class StandardInputReaderThread(threading.Thread):
                     rule[2] + ' ' + rule[3])
                 self.in_queue.put((rule[2], rule[3]))
 
-    def run(self):    
+    def run(self):
         timestamp_format = (
             r'\[(?P<timestamp>\d{4}-\d{2}-\d{2} '
             r'\d{2}:\d{2}:\d{2}\.\d{3})\]')
@@ -167,7 +167,8 @@ class EphemerisThread(threading.Thread):
                 State().day_or_night = new_day_or_night
                 print 'day/night state is now ' + new_day_or_night
                 for rule in Constants.rules:
-                    if rule[0] == 'day_or_night' and rule[1] == new_day_or_night:
+                    if (rule[0] == 'day_or_night' and
+                            rule[1] == new_day_or_night):
                         print (
                             rule[0] + ' ' + rule[1] + ' triggers ' +
                             rule[2] + ' ' + rule[3])
@@ -176,13 +177,13 @@ class EphemerisThread(threading.Thread):
 
 
 class State(object):
-    
+
     _instance = None
     rooms = None
     day_or_night = None
     init = None
     log = None
-    
+
     def __new__(cls):
         if not cls._instance:
             cls._instance = super(State, cls).__new__(cls)
@@ -191,7 +192,7 @@ class State(object):
             cls._instance.init = False
             cls._instance.log = []
         return cls._instance
-    
+
     def get_dict(self):
         return {
             'rooms': dict(self.rooms),
@@ -220,7 +221,7 @@ class Room(object):
 
     value = None
     time = None
-    
+
     def __repr__(self):
         return str(self.value)
 
@@ -375,7 +376,8 @@ $(document).ready( function() {
 def philio_fix(device):
     for instance in [2, 3]:
         url = 'http://127.0.0.1:8083/ZWaveAPI/Run/devices[' + str(
-            device) + '].instances[' + str(instance) + '].commandClasses[37].Get()'
+            device) + '].instances[' + str(
+            instance) + '].commandClasses[37].Get()'
         urllib2.urlopen(url)
 
 
@@ -397,7 +399,7 @@ def set_lights(room, action):
         if action == 255 or 0 <= action <= 100:
             url = 'http://127.0.0.1:8083/ZWaveAPI/Run/devices[' + str(
                 device[0]) + '].instances[' + str(
-                    device[1]) + '].' + device[2] + '.Set(' + str(action) + ')'
+                device[1]) + '].' + device[2] + '.Set(' + str(action) + ')'
             urllib2.urlopen(url)
             return True
         else:
@@ -423,7 +425,8 @@ def send_push(room, value, room_type, timestamp):
     json_string = json.dumps({
         'default': room + ' ' + value,
         'GCM': json.dumps({'data': {
-            'room': room, 'value': value, 'type': room_type, 'time': timestamp}
+            'room': room, 'value': value, 'type': room_type,
+            'time': timestamp}
         })
     })
     c.publish(
@@ -439,9 +442,9 @@ except OSError:
 
 
 def main():
-    
+
     ServerThread().start()
-    
+
     input_queue = Queue()
     output_queue = Queue()
     StandardInputReaderThread(input_queue, output_queue).start()
@@ -452,7 +455,7 @@ def main():
     for room, room_config in Constants.config.iteritems():
         if room_config[2] == 'HomeEasy':
             output_queue.put((room, '?', room_config[2], 0))
-    
+
     while True:
         event = input_queue.get(True)
         set_lights(event[0], event[1])
