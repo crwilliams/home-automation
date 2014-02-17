@@ -120,25 +120,26 @@ class ExternalQueueReaderThread(threading.Thread):
     def __init__(self, queue):
         threading.Thread.__init__(self)
         self.queue = queue
-        c = boto.sqs.connect_to_region(
+        sqs = boto.sqs.connect_to_region(
             Constants.aws_region,
             aws_access_key_id=Constants.aws_access_key,
             aws_secret_access_key=Constants.aws_secret_key)
-        self.remote_queue = c.get_queue(Constants.aws_sqs_queue_name)
+        self.remote_queue = sqs.get_queue(Constants.aws_sqs_queue_name)
         self.remote_queue.set_message_class(RawMessage)
 
     def run(self):
         while True:
-            rs = self.remote_queue.get_messages(10, None, None, 20)
+            messages = self.remote_queue.get_messages(10, None, None, 20)
 
-            for m in rs:
-                print 'Received message from remote queue: ' + m.get_body()
+            for message in messages:
+                body = message.get_body()
+                print 'Received message from remote queue: ' + body
                 try:
-                    room, value = m.get_body().split('/', 1)
+                    room, value = body.split('/', 1)
                     self.queue.put((room, value))
                 except ValueError:
-                    print 'Unable to process message: ' + m.get_body()
-                self.remote_queue.delete_message(m)
+                    print 'Unable to process message: ' + body
+                self.remote_queue.delete_message(message)
 
 
 class EphemerisThread(threading.Thread):
@@ -153,9 +154,7 @@ class EphemerisThread(threading.Thread):
         location = ephem.city(self.city)
 
         sun.compute()
-        nr = location.next_rising(sun)
-        ns = location.next_setting(sun)
-        if(nr < ns):
+        if location.next_rising(sun) < location.next_setting(sun):
             return 'night'
         else:
             return 'day'
@@ -258,92 +257,92 @@ class MyHandler(BaseHTTPRequestHandler):
             self.send_error(404, 'File Not Found: %s' % self.path)
 
     def output_main_page(self):
-        w = XMLGenerator(self.wfile, 'utf-8')
-        w.startDocument()
-        w.startElement('html', {'lang': 'en'})
-        self.output_head(w)
-        self.output_body(w)
-        w.endElement('html')
-        w.endDocument()
+        gen = XMLGenerator(self.wfile, 'utf-8')
+        gen.startDocument()
+        gen.startElement('html', {'lang': 'en'})
+        self.output_head(gen)
+        self.output_body(gen)
+        gen.endElement('html')
+        gen.endDocument()
 
     @staticmethod
-    def output_head(w):
-        w.startElement('head', {})
-        MyHandler.output_title(w, Constants.web_page_title)
+    def output_head(gen):
+        gen.startElement('head', {})
+        MyHandler.output_title(gen, Constants.web_page_title)
         MyHandler.output_meta(
-            w, 'viewport', 'width=device-width, initial-scale=1.0')
+            gen, 'viewport', 'width=device-width, initial-scale=1.0')
         MyHandler.output_stylesheet(
-            w, Constants.bootstrap_base_url + '/css/bootstrap.min.css')
+            gen, Constants.bootstrap_base_url + '/css/bootstrap.min.css')
         MyHandler.output_stylesheet(
-            w, Constants.bootstrap_base_url + '/css/bootstrap-theme.min.css')
-        w.endElement('head')
+            gen, Constants.bootstrap_base_url + '/css/bootstrap-theme.min.css')
+        gen.endElement('head')
 
     @staticmethod
-    def output_body(w):
-        w.startElement('body', {})
-        w.startElement('form', {})
-        w.startElement('table', {})
+    def output_body(gen):
+        gen.startElement('body', {})
+        gen.startElement('form', {})
+        gen.startElement('table', {})
 
         for room, room_config in Constants.config.iteritems():
-            MyHandler.output_row(w, room, Constants.values[room_config[2]])
+            MyHandler.output_row(gen, room, Constants.values[room_config[2]])
 
-        w.endElement('table')
-        w.endElement('form')
+        gen.endElement('table')
+        gen.endElement('form')
 
-        MyHandler.output_scripts(w)
-        w.endElement('body')
-
-    @staticmethod
-    def output_title(w, title):
-        w.startElement('title', {})
-        w.characters(title)
-        w.endElement('title')
+        MyHandler.output_scripts(gen)
+        gen.endElement('body')
 
     @staticmethod
-    def output_meta(w, name, content):
-        w.startElement('meta', {'name': name, 'content': content})
-        w.endElement('meta')
+    def output_title(gen, title):
+        gen.startElement('title', {})
+        gen.characters(title)
+        gen.endElement('title')
 
     @staticmethod
-    def output_stylesheet(w, href):
-        w.startElement('link', {
+    def output_meta(gen, name, content):
+        gen.startElement('meta', {'name': name, 'content': content})
+        gen.endElement('meta')
+
+    @staticmethod
+    def output_stylesheet(gen, href):
+        gen.startElement('link', {
             'href': href,
             'rel': 'stylesheet',
             'media': 'screen'})
-        w.endElement('link')
+        gen.endElement('link')
 
     @staticmethod
-    def output_row(w, room, actions):
-        w.startElement('tr', {})
-        w.startElement('td', {})
-        w.characters(room)
-        w.endElement('td')
-        w.startElement('td', {})
+    def output_row(gen, room, actions):
+        gen.startElement('tr', {})
+        gen.startElement('td', {})
+        gen.characters(room)
+        gen.endElement('td')
+        gen.startElement('td', {})
         for action in actions:
-            MyHandler.output_button(w, room, action)
-        w.endElement('td')
-        w.endElement('tr')
+            MyHandler.output_button(gen, room, action)
+        gen.endElement('td')
+        gen.endElement('tr')
 
     @staticmethod
-    def output_button(w, room, action):
-        w.startElement('button', {
+    def output_button(gen, room, action):
+        gen.startElement('button', {
             'type': 'button',
             'id': room + '-' + action,
             'class': 'btn btn-lg',
             'onclick': 'foo(\'' + room + '\', \'' + action + '\')'})
-        w.characters(action)
-        w.endElement('button')
+        gen.characters(action)
+        gen.endElement('button')
 
     @staticmethod
-    def output_scripts(w):
-        w.startElement('script', {
+    def output_scripts(gen):
+        gen.startElement('script', {
             'src': Constants.jquery_base_url + '/jquery-1.10.2.min.js'})
-        w.endElement('script')
-        w.startElement('script', {
+        gen.endElement('script')
+        gen.startElement('script', {
             'src': Constants.bootstrap_base_url + '/js/bootstrap.min.js'})
-        w.endElement('script')
-        w.startElement('script', {})
-        w.characters("""
+        gen.endElement('script')
+        gen.startElement('script', {})
+        gen.characters("""
 function foo(room, action)
 {
     jQuery.get('/lights/' + room + '/' + action);
@@ -370,7 +369,7 @@ $(document).ready( function() {
         }, 'json');
     }, 1000);
 });""")
-        w.endElement('script')
+        gen.endElement('script')
 
 
 def philio_fix(device):
@@ -408,7 +407,7 @@ def set_lights(room, action):
         command = '-'.join([
             str(device[0]), str(device[1]), str(action.upper())])
         try:
-            ser.write(command)
+            SERIAL.write(command)
         except NameError:
             print 'No serial device, cannot send command ' + command
 
@@ -418,7 +417,7 @@ def send_push(room, value, room_type, timestamp):
         'Sending push notification for ' + room + ': ' + value +
         ' (at time ' + str(timestamp) + ')')
 
-    c = boto.sns.connect_to_region(
+    sns = boto.sns.connect_to_region(
         Constants.aws_region,
         aws_access_key_id=Constants.aws_access_key,
         aws_secret_access_key=Constants.aws_secret_key)
@@ -429,14 +428,14 @@ def send_push(room, value, room_type, timestamp):
             'time': timestamp}
         })
     })
-    c.publish(
+    sns.publish(
         Constants.aws_sns_topic,
         json_string,
         message_structure='json')
 
 
 try:
-    ser = serial.Serial(Constants.serial_device, 9600)
+    SERIAL = serial.Serial(Constants.serial_device, 9600)
 except OSError:
     print 'Unable to open ' + Constants.serial_device
 
