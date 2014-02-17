@@ -196,7 +196,6 @@ class State(object):
         return {
             'rooms': dict(self.rooms),
             'day_or_night': self.day_or_night,
-            'log': self.log,
         }
 
     def log_init(self):
@@ -244,6 +243,11 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.send_header('Content-type', 'application/json')
                 self.end_headers()
                 self.wfile.write(json.dumps(State(), cls=ComplexEncoder))
+            elif path_parts[0] == 'log':
+                self.send_response(200)
+                self.send_header('Content-type', 'application/json')
+                self.end_headers()
+                self.wfile.write(json.dumps(State().log, cls=ComplexEncoder))
             elif path_parts[0] == 'lights':
                 room = path_parts[1]
                 action = path_parts[2]
