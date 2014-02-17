@@ -104,6 +104,7 @@ class StandardInputReaderThread(threading.Thread):
                             philio_fix(match_dict['device'])
                             continue
                         self.process_rules(room_name, match_dict['value'])
+                        State().log.append(dict([int(current_update_time), room_name, match_dict['value']]))
                         self.out_queue.put((
                             room_name, match_dict['value'],
                             Constants.config[room_name][2],
@@ -178,6 +179,7 @@ class State(object):
     rooms = None
     day_or_night = None
     init = None
+    log = None
     
     def __new__(cls):
         if not cls._instance:
@@ -185,12 +187,14 @@ class State(object):
             print 'creating singleton'
             cls._instance.rooms = defaultdict(Room)
             cls._instance.init = False
+            cls._instance.log = []
         return cls._instance
     
     def get_dict(self):
         return {
             'rooms': dict(self.rooms),
             'day_or_night': self.day_or_night,
+            'log': dict(self.log)
         }
 
     def log_init(self):
