@@ -104,7 +104,7 @@ class StandardInputReaderThread(threading.Thread):
                             philio_fix(match_dict['device'])
                             continue
                         self.process_rules(room_name, match_dict['value'])
-                        State().log.append(dict([int(current_update_time), room_name, match_dict['value']]))
+                        State().log.append((int(current_update_time), room_name, match_dict['value']))
                         self.out_queue.put((
                             room_name, match_dict['value'],
                             Constants.config[room_name][2],
@@ -194,7 +194,7 @@ class State(object):
         return {
             'rooms': dict(self.rooms),
             'day_or_night': self.day_or_night,
-            'log': dict(self.log)
+            'log': self.log,
         }
 
     def log_init(self):
