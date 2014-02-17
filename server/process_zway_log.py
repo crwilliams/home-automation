@@ -97,18 +97,20 @@ class StandardInputReaderThread(threading.Thread):
                         match_dict['timestamp'], '%Y-%m-%d %H:%M:%S.%f'))
                     State().rooms[room_name].value = match_dict['value']
                     State().rooms[room_name].time = current_update_time
-                    if State().is_init() and (
-                            previous_update_value != match_dict['value'] or (
-                            current_update_time - previous_update_time) > 10):
-                        if room_name == 'philio-fix':
-                            philio_fix(match_dict['device'])
-                            continue
-                        self.process_rules(room_name, match_dict['value'])
-                        State().log.append((int(current_update_time), room_name, match_dict['value']))
-                        self.out_queue.put((
-                            room_name, match_dict['value'],
-                            Constants.config[room_name][2],
-                            int(current_update_time)))
+                    if previous_update_value != match_dict['value'] or (
+                            current_update_time - previous_update_time) > 10:
+                        State().log.append((
+                            int(current_update_time), room_name,
+                            match_dict['value']))
+                        if State().is_init():
+                            if room_name == 'philio-fix':
+                                philio_fix(match_dict['device'])
+                                continue
+                            self.process_rules(room_name, match_dict['value'])
+                            self.out_queue.put((
+                                room_name, match_dict['value'],
+                                Constants.config[room_name][2],
+                                int(current_update_time)))
                 else:
                     print 'Error processing ' + key + ': ' + str(match_dict)
 
