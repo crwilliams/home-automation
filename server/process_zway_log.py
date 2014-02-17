@@ -143,14 +143,15 @@ class EphemerisThread(threading.Thread):
     def __init__(self, queue, city):
         threading.Thread.__init__(self)
         self.queue = queue
-        
-        self.sun = ephem.Sun()
-        self.location = ephem.city(city)
-        
+        self.city = city
+
     def day_or_night(self):
-        self.sun.compute()
-        nr = self.location.next_rising(self.sun)
-        ns = self.location.next_setting(self.sun)
+        sun = ephem.Sun()
+        location = ephem.city(self.city)
+
+        sun.compute()
+        nr = location.next_rising(sun)
+        ns = location.next_setting(sun)
         if(nr < ns):
             return 'night'
         else:
