@@ -99,9 +99,9 @@ class StandardInputReaderThread(threading.Thread):
                     State().rooms[room_name].time = current_update_time
                     if previous_update_value != match_dict['value'] or (
                             current_update_time - previous_update_time) > 10:
-                        State().log.append((
+                        State().add_log_entry(
                             int(current_update_time), room_name,
-                            match_dict['value']))
+                            match_dict['value'])
                         if State().is_init():
                             if room_name == 'philio-fix':
                                 philio_fix(match_dict['device'])
@@ -203,6 +203,9 @@ class State(object):
 
     def is_init(self):
         return self.init
+
+    def add_log_entry(self, timestamp, room, value):
+        self.log.append({'time': timestamp, 'room': room, 'value': value})
 
 
 class ComplexEncoder(json.JSONEncoder):
