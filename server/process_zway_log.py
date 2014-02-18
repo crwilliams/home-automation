@@ -267,89 +267,89 @@ class MyHandler(BaseHTTPRequestHandler):
         gen = XMLGenerator(self.wfile, 'utf-8')
         gen.startDocument()
         gen.startElement('html', {'lang': 'en'})
-        self.output_head(gen)
-        self.output_body(gen)
+        htmlgen = HtmlPageGenerator(gen)
+        htmlgen.output_head()
+        htmlgen.output_body()
         gen.endElement('html')
         gen.endDocument()
 
-    @staticmethod
-    def output_head(gen):
-        gen.startElement('head', {})
-        MyHandler.output_title(gen, Constants.web_page_title)
-        MyHandler.output_meta(
-            gen, 'viewport', 'width=device-width, initial-scale=1.0')
-        MyHandler.output_stylesheet(
-            gen, Constants.bootstrap_base_url + '/css/bootstrap.min.css')
-        MyHandler.output_stylesheet(
-            gen, Constants.bootstrap_base_url + '/css/bootstrap-theme.min.css')
-        gen.endElement('head')
 
-    @staticmethod
-    def output_body(gen):
-        gen.startElement('body', {})
-        gen.startElement('form', {})
-        gen.startElement('table', {})
+class HtmlPageGenerator(object):
+
+    def __init__(self, xmlgenerator):
+        self.gen = xmlgenerator
+
+    def output_head(self):
+        self.gen.startElement('head', {})
+        self.output_title(Constants.web_page_title)
+        self.output_meta(
+            'viewport', 'width=device-width, initial-scale=1.0')
+        self.output_stylesheet(
+            Constants.bootstrap_base_url + '/css/bootstrap.min.css')
+        self.output_stylesheet(
+            Constants.bootstrap_base_url + '/css/bootstrap-theme.min.css')
+        self.gen.endElement('head')
+
+    def output_body(self):
+        self.gen.startElement('body', {})
+        self.gen.startElement('form', {})
+        self.gen.startElement('table', {})
 
         for room, room_config in Constants.config.iteritems():
-            MyHandler.output_row(gen, room, Constants.values[room_config[2]])
+            self.output_row(
+                room, Constants.values[room_config[2]])
 
-        gen.endElement('table')
-        gen.endElement('form')
+        self.gen.endElement('table')
+        self.gen.endElement('form')
 
-        MyHandler.output_scripts(gen)
-        gen.endElement('body')
+        self.output_scripts()
+        self.gen.endElement('body')
 
-    @staticmethod
-    def output_title(gen, title):
-        gen.startElement('title', {})
-        gen.characters(title)
-        gen.endElement('title')
+    def output_title(self, title):
+        self.gen.startElement('title', {})
+        self.gen.characters(title)
+        self.gen.endElement('title')
 
-    @staticmethod
-    def output_meta(gen, name, content):
-        gen.startElement('meta', {'name': name, 'content': content})
-        gen.endElement('meta')
+    def output_meta(self, name, content):
+        self.gen.startElement('meta', {'name': name, 'content': content})
+        self.gen.endElement('meta')
 
-    @staticmethod
-    def output_stylesheet(gen, href):
-        gen.startElement('link', {
+    def output_stylesheet(self, href):
+        self.gen.startElement('link', {
             'href': href,
             'rel': 'stylesheet',
             'media': 'screen'})
-        gen.endElement('link')
+        self.gen.endElement('link')
 
-    @staticmethod
-    def output_row(gen, room, actions):
-        gen.startElement('tr', {})
-        gen.startElement('td', {})
-        gen.characters(room)
-        gen.endElement('td')
-        gen.startElement('td', {})
+    def output_row(self, room, actions):
+        self.gen.startElement('tr', {})
+        self.gen.startElement('td', {})
+        self.gen.characters(room)
+        self.gen.endElement('td')
+        self.gen.startElement('td', {})
         for action in actions:
-            MyHandler.output_button(gen, room, action)
-        gen.endElement('td')
-        gen.endElement('tr')
+            self.output_button(room, action)
+        self.gen.endElement('td')
+        self.gen.endElement('tr')
 
-    @staticmethod
-    def output_button(gen, room, action):
-        gen.startElement('button', {
+    def output_button(self, room, action):
+        self.gen.startElement('button', {
             'type': 'button',
             'id': room + '-' + action,
             'class': 'btn btn-lg',
             'onclick': 'foo(\'' + room + '\', \'' + action + '\')'})
-        gen.characters(action)
-        gen.endElement('button')
+        self.gen.characters(action)
+        self.gen.endElement('button')
 
-    @staticmethod
-    def output_scripts(gen):
-        gen.startElement('script', {
+    def output_scripts(self):
+        self.gen.startElement('script', {
             'src': Constants.jquery_base_url + '/jquery-1.10.2.min.js'})
-        gen.endElement('script')
-        gen.startElement('script', {
+        self.gen.endElement('script')
+        self.gen.startElement('script', {
             'src': Constants.bootstrap_base_url + '/js/bootstrap.min.js'})
-        gen.endElement('script')
-        gen.startElement('script', {})
-        gen.characters("""
+        self.gen.endElement('script')
+        self.gen.startElement('script', {})
+        self.gen.characters("""
 function foo(room, action)
 {
     jQuery.get('/lights/' + room + '/' + action);
@@ -376,7 +376,7 @@ $(document).ready( function() {
         }, 'json');
     }, 1000);
 });""")
-        gen.endElement('script')
+        self.gen.endElement('script')
 
 
 def philio_fix(device):
