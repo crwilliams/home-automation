@@ -95,8 +95,8 @@ class StandardInputReaderThread(threading.Thread):
                     previous_update_value = State().rooms[room_name].value
                     current_update_time = time.mktime(time.strptime(
                         match_dict['timestamp'], '%Y-%m-%d %H:%M:%S.%f'))
-                    State().rooms[room_name].value = match_dict['value']
-                    State().rooms[room_name].time = current_update_time
+                    State().rooms[room_name].update(
+                        current_update_time, match_dict['value'])
                     if previous_update_value != match_dict['value'] or (
                             current_update_time - previous_update_time) > 10:
                         State().add_log_entry(
@@ -214,17 +214,24 @@ class ComplexEncoder(json.JSONEncoder):
         if isinstance(obj, State):
             return obj.get_dict()
         if isinstance(obj, Room):
-            return obj.value
+            return obj.get_value()
         return json.JSONEncoder.default(self, obj)
 
 
 class Room(object):
 
-    value = None
-    time = None
+    _value = None
+    _time = None
 
     def __repr__(self):
-        return str(self.value)
+        return str(self._value)
+
+    def update(self, timestamp, value):
+        self._value = value
+        self._time = timestamp
+
+    def get_value(self):
+        return self._value
 
 
 class MyHandler(BaseHTTPRequestHandler):
