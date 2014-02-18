@@ -91,14 +91,14 @@ class StandardInputReaderThread(threading.Thread):
                     print (
                         match_dict['timestamp'] + ' ' + room_name + ': ' +
                         match_dict['value'] + ' ' + match_dict['cc'])
-                    previous_update_time = State().rooms[room_name].time
-                    previous_update_value = State().rooms[room_name].value
+                    previous_time = State().rooms[room_name].get_time()
+                    previous_value = State().rooms[room_name].get_value()
                     current_update_time = time.mktime(time.strptime(
                         match_dict['timestamp'], '%Y-%m-%d %H:%M:%S.%f'))
                     State().rooms[room_name].update(
                         current_update_time, match_dict['value'])
-                    if previous_update_value != match_dict['value'] or (
-                            current_update_time - previous_update_time) > 10:
+                    if previous_value != match_dict['value'] or (
+                            current_update_time - previous_time) > 10:
                         State().add_log_entry(
                             int(current_update_time), room_name,
                             match_dict['value'])
@@ -232,6 +232,9 @@ class Room(object):
 
     def get_value(self):
         return self._value
+
+    def get_time(self):
+        return self._time
 
 
 class MyHandler(BaseHTTPRequestHandler):
