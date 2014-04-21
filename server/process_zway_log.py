@@ -83,15 +83,15 @@ class LevelProcessor(Processor):
         Processor.__init__(self)
         self.in_queue = in_queue
         self.out_queue = out_queue
-        self.set_pattern(
-            self.timestamp_format +
-            r' SETDATA ' +
-            r'devices\.(?P<device>\d)\.' +
-            r'instances\.(?P<instance>\d)\.' +
-            r'commandClasses\.(?P<cc>(37|38|48))\.' +
-            r'data\.(1\.)?' +
+        self.set_pattern(''.join([
+            self.timestamp_format,
+            r' SETDATA ',
+            r'devices\.(?P<device>\d)\.',
+            r'instances\.(?P<instance>\d)\.',
+            r'commandClasses\.(?P<cc>(37|38|48))\.',
+            r'data\.(1\.)?',
             r'level = (?P<value>(\d+|True|False))'
-        )
+        ]))
         self.rooms = {}
         for room, room_config in Constants.config.iteritems():
             self.rooms[
@@ -104,9 +104,9 @@ class LevelProcessor(Processor):
             key = '-'.join([match_dict['device'], match_dict['instance']])
             if key in self.rooms:
                 room_name = self.rooms[key]
-                print (
-                    match_dict['timestamp'] + ' ' + room_name + ': ' +
-                    match_dict['value'] + ' ' + match_dict['cc'])
+                print '%s %s: %s %s' % (
+                    match_dict['timestamp'], room_name, match_dict['value'],
+                    match_dict['cc'])
                 previous_time = State().rooms[room_name].get_time()
                 previous_value = State().rooms[room_name].get_value()
                 current_update_time = time.mktime(time.strptime(
@@ -128,14 +128,13 @@ class LevelProcessor(Processor):
                             Constants.config[room_name][2],
                             int(current_update_time)))
             else:
-                print 'Error processing ' + key + ': ' + str(match_dict)
+                print 'Error processing %s: %s' % (key, str(match_dict))
 
     def process_rules(self, room_name, value):
         for rule in Constants.rules:
             if rule[0] == room_name and rule[1] == value:
-                print (
-                    rule[0] + ' ' + rule[1] + ' triggers ' +
-                    rule[2] + ' ' + rule[3])
+                print ' '.join([
+                    rule[0], rule[1], 'triggers', rule[2], rule[3]])
                 self.in_queue.put((rule[2], rule[3]))
 
 
@@ -143,15 +142,15 @@ class ValProcessor(Processor):
 
     def __init__(self):
         Processor.__init__(self)
-        self.set_pattern(
-            self.timestamp_format +
-            r' SETDATA ' +
-            r'devices\.(?P<device>\d)\.' +
-            r'instances\.(?P<instance>\d)\.' +
-            r'commandClasses\.49\.' +
-            r'data\.(?P<d>\d)\.' +
+        self.set_pattern(''.join([
+            self.timestamp_format,
+            r' SETDATA ',
+            r'devices\.(?P<device>\d)\.',
+            r'instances\.(?P<instance>\d)\.',
+            r'commandClasses\.49\.',
+            r'data\.(?P<d>\d)\.',
             r'val = (?P<value>([\d\.]+))'
-        )
+        ]))
 
     def process(self, line):
         match = self.match(line)
@@ -186,12 +185,12 @@ class ExternalQueueReaderThread(threading.Thread):
 
             for message in messages:
                 body = message.get_body()
-                print 'Received message from remote queue: ' + body
+                print 'Received message from remote queue: %s' % body
                 try:
                     room, value = body.split('/', 1)
                     self.queue.put((room, value))
                 except ValueError:
-                    print 'Unable to process message: ' + body
+                    print 'Unable to process message: %s' % body
                 self.remote_queue.delete_message(message)
 
 
@@ -218,13 +217,12 @@ class EphemerisThread(threading.Thread):
             new_day_or_night = self.day_or_night()
             if new_day_or_night != State().day_or_night:
                 State().day_or_night = new_day_or_night
-                print 'day/night state is now ' + new_day_or_night
+                print 'day/night state is now %s' % new_day_or_night
                 for rule in Constants.rules:
                     if (rule[0] == 'day_or_night' and
                             rule[1] == new_day_or_night):
-                        print (
-                            rule[0] + ' ' + rule[1] + ' triggers ' +
-                            rule[2] + ' ' + rule[3])
+                        print ' '.join([
+                            rule[0], rule[1], 'triggers', rule[2], rule[3]])
                         self.queue.put((rule[2], rule[3]))
             time.sleep(10)
 
@@ -376,10 +374,10 @@ class HtmlPageGenerator(object):
         self.output_title(Constants.web_page_title)
         self.output_meta(
             'viewport', 'width=device-width, initial-scale=1.0')
-        self.output_stylesheet(
-            Constants.bootstrap_base_url + '/css/bootstrap.min.css')
-        self.output_stylesheet(
-            Constants.bootstrap_base_url + '/css/bootstrap-theme.min.css')
+        self.output_stylesheet('%s/css/bootstrap.min.css' % (
+            Constants.bootstrap_base_url))
+        self.output_stylesheet('%s/css/bootstrap-theme.min.css' % (
+            Constants.bootstrap_base_url))
         self.gen.endElement('head')
 
     def output_body(self):
@@ -427,18 +425,18 @@ class HtmlPageGenerator(object):
     def output_button(self, room, action):
         self.gen.startElement('button', {
             'type': 'button',
-            'id': room + '-' + action,
+            'id': '-'.join([room, action]),
             'class': 'btn btn-lg',
-            'onclick': 'foo(\'' + room + '\', \'' + action + '\')'})
+            'onclick': 'foo(\'%s\', \'%s\')' % (room, action)})
         self.gen.characters(action)
         self.gen.endElement('button')
 
     def output_scripts(self):
         self.gen.startElement('script', {
-            'src': Constants.jquery_base_url + '/jquery-1.10.2.min.js'})
+            'src': '%s/jquery-1.10.2.min.js' % Constants.jquery_base_url})
         self.gen.endElement('script')
         self.gen.startElement('script', {
-            'src': Constants.bootstrap_base_url + '/js/bootstrap.min.js'})
+            'src': '%s/js/bootstrap.min.js' % Constants.bootstrap_base_url})
         self.gen.endElement('script')
         self.gen.startElement('script', {})
         self.gen.characters("""
@@ -473,9 +471,10 @@ $(document).ready( function() {
 
 def philio_fix(device):
     for instance in [2, 3]:
-        url = 'http://127.0.0.1:8083/ZWaveAPI/Run/devices[' + str(
-            device) + '].instances[' + str(
-            instance) + '].commandClasses[37].Get()'
+        url = (
+            'http://127.0.0.1:8083/ZWaveAPI/Run/'
+            'devices[%s].instances[%s].commandClasses[37].Get()' % (
+                str(device), str(instance)))
         urllib2.urlopen(url)
 
 
@@ -495,9 +494,11 @@ def set_lights(room, action):
         action = int(action)
 
         if action == 255 or 0 <= action <= 100:
-            url = 'http://127.0.0.1:8083/ZWaveAPI/Run/devices[' + str(
-                device[0]) + '].instances[' + str(
-                device[1]) + '].' + device[2] + '.Set(' + str(action) + ')'
+            url = (
+                'http://127.0.0.1:8083/ZWaveAPI/Run/'
+                'devices[%s].instances[%s].%s.Set(%s)' % (
+                    str(device[0]), str(device[1]), str(device[2]),
+                    str(action)))
             urllib2.urlopen(url)
             return True
         else:
@@ -508,20 +509,19 @@ def set_lights(room, action):
         try:
             SERIAL.write(command)
         except NameError:
-            print 'No serial device, cannot send command ' + command
+            print 'No serial device, cannot send command %s ' % command
 
 
 def send_push(room, value, room_type, timestamp):
-    print (
-        'Sending push notification for ' + room + ': ' + value +
-        ' (at time ' + str(timestamp) + ')')
+    print 'Sending push notification for %s: %s (at time %s)' % (
+        room, value, str(timestamp))
 
     sns = boto.sns.connect_to_region(
         Constants.aws_region,
         aws_access_key_id=Constants.aws_access_key,
         aws_secret_access_key=Constants.aws_secret_key)
     json_string = json.dumps({
-        'default': room + ' ' + value,
+        'default': ' '.join([room, value]),
         'GCM': json.dumps({'data': {
             'room': room, 'value': value, 'type': room_type,
             'time': timestamp}
@@ -536,7 +536,7 @@ def send_push(room, value, room_type, timestamp):
 try:
     SERIAL = serial.Serial(Constants.serial_device, 9600)
 except OSError:
-    print 'Unable to open ' + Constants.serial_device
+    print 'Unable to open %s' % Constants.serial_device
 
 
 def main():
