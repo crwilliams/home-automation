@@ -28,6 +28,13 @@ class Constants(object):
         ('day_or_night', 'night', 'lamp', 'on'),
         ('day_or_night', 'night', 'lamp', 'off'),
     ]
+    limits = {
+        'bedroom1': 60,
+        'bedroom2': 60,
+        'living': 120,
+        'kitchen': 60,
+        'dining': 120,
+    }
     values = {
         'SwitchMultilevel': ['off', 'on', '30', '40', '50', '60', '70', '80'],
         'SwitchBinary': ['off', 'on'],

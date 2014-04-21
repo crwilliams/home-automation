@@ -11,6 +11,7 @@ import boto.sqs
 import boto.sns
 import serial
 from boto.sqs.message import RawMessage
+import math
 
 from xml.sax.saxutils import XMLGenerator
 
@@ -223,6 +224,33 @@ class EphemerisThread(threading.Thread):
                             rule[2] + ' ' + rule[3])
                         self.queue.put((rule[2], rule[3]))
             time.sleep(10)
+
+
+class TimerThread(threading.Thread):
+
+    def __init__(self, queue):
+        threading.Thread.__init__(self)
+        self.queue = queue
+
+    def run(self):
+        while True:
+            for name, limit in Constants.limits.iteritems():
+                try:
+                    room = State().rooms[name]
+                    try:
+                        value = int(room.get_value())
+                    except TypeError:
+                        value = 0
+                    except ValueError:
+                        value = 0
+                    if value > 0:
+                        duration = int(
+                            math.floor((time.time() - room.get_time())/60.0))
+                        if duration > limit:
+                            self.queue.put((name, 0))
+                except ValueError:
+                    pass
+            time.sleep(60)
 
 
 class State(object):
@@ -517,6 +545,7 @@ def main():
     ExternalQueueReaderThread(input_queue).start()
     OutboundThread(output_queue).start()
     EphemerisThread(input_queue, 'London').start()
+    TimerThread(input_queue).start()
 
     for room, room_config in Constants.config.iteritems():
         if room_config[2] == 'HomeEasy':
