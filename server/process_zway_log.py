@@ -1,22 +1,20 @@
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
-import threading
-import sys
-import re
-from collections import defaultdict
-import json
-import urllib2
-import time
 from Queue import Queue
-import boto.sqs
-import boto.sns
-import serial
 from boto.sqs.message import RawMessage
-import math
-
-from xml.sax.saxutils import XMLGenerator
-
+from collections import defaultdict
 from constants import Constants
+from xml.sax.saxutils import XMLGenerator
+import boto.sns
+import boto.sqs
 import ephem
+import json
+import math
+import re
+import serial
+import sys
+import threading
+import time
+import urllib2
 
 
 class ServerThread(threading.Thread):
