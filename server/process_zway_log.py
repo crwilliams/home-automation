@@ -94,8 +94,8 @@ class LevelProcessor(Processor):
         ]))
         self.rooms = {}
         for room, room_config in Constants.config.iteritems():
-            self.rooms[
-                '-'.join([str(room_config[0]), str(room_config[1])])] = room
+            self.rooms['-'.join([str(x) for x in [
+                room_config[0], room_config[1]]])] = room
 
     def process(self, line):
         match = self.match(line)
@@ -128,7 +128,7 @@ class LevelProcessor(Processor):
                             Constants.config[room_name][2],
                             int(current_update_time)))
             else:
-                print 'Error processing %s: %s' % (key, str(match_dict))
+                print 'Error processing %s: %s' % (key, match_dict)
 
     def process_rules(self, room_name, value):
         for rule in Constants.rules:
@@ -474,7 +474,7 @@ def philio_fix(device):
         url = (
             'http://127.0.0.1:8083/ZWaveAPI/Run/'
             'devices[%s].instances[%s].commandClasses[37].Get()' % (
-                str(device), str(instance)))
+                device, instance))
         urllib2.urlopen(url)
 
 
@@ -497,15 +497,14 @@ def set_lights(room, action):
             url = (
                 'http://127.0.0.1:8083/ZWaveAPI/Run/'
                 'devices[%s].instances[%s].%s.Set(%s)' % (
-                    str(device[0]), str(device[1]), str(device[2]),
-                    str(action)))
+                    device[0], device[1], device[2], action))
             urllib2.urlopen(url)
             return True
         else:
             return False
     elif device[2] == 'HomeEasy':
-        command = '-'.join([
-            str(device[0]), str(device[1]), str(action.upper())])
+        command = '-'.join([str(x) for x in [
+            device[0], device[1], action.upper()]])
         try:
             SERIAL.write(command)
         except NameError:
@@ -514,7 +513,7 @@ def set_lights(room, action):
 
 def send_push(room, value, room_type, timestamp):
     print 'Sending push notification for %s: %s (at time %s)' % (
-        room, value, str(timestamp))
+        room, value, timestamp)
 
     sns = boto.sns.connect_to_region(
         Constants.aws_region,
