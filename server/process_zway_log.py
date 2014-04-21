@@ -23,6 +23,7 @@ class ServerThread(threading.Thread):
 
     def __init__(self):
         threading.Thread.__init__(self)
+        self.daemon = True
 
     def run(self):
         time.sleep(20)
@@ -36,6 +37,7 @@ class OutboundThread(threading.Thread):
 
     def __init__(self, queue):
         threading.Thread.__init__(self)
+        self.daemon = True
         self.queue = queue
 
     def run(self):
@@ -48,6 +50,7 @@ class StandardInputReaderThread(threading.Thread):
 
     def __init__(self, in_queue, out_queue):
         threading.Thread.__init__(self)
+        self.daemon = True
         self.level_processor = LevelProcessor(in_queue, out_queue)
         self.val_processor = ValProcessor()
 
@@ -170,6 +173,7 @@ class ExternalQueueReaderThread(threading.Thread):
 
     def __init__(self, queue):
         threading.Thread.__init__(self)
+        self.daemon = True
         self.queue = queue
         sqs = boto.sqs.connect_to_region(
             Constants.aws_region,
@@ -197,6 +201,7 @@ class EphemerisThread(threading.Thread):
 
     def __init__(self, queue, city):
         threading.Thread.__init__(self)
+        self.daemon = True
         self.queue = queue
         self.city = city
 
@@ -230,6 +235,7 @@ class TimerThread(threading.Thread):
 
     def __init__(self, queue):
         threading.Thread.__init__(self)
+        self.daemon = True
         self.queue = queue
 
     def run(self):
