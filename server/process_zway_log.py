@@ -2,7 +2,9 @@ from Queue import Queue
 from collections import defaultdict
 import urllib2
 
+import math
 import serial
+import time
 
 from Threads.EphemerisThread import EphemerisThread
 from Threads.ExternalQueueReaderThread import ExternalQueueReaderThread
@@ -62,6 +64,15 @@ class Room(object):
 
     def get_time(self):
         return self._time
+
+    def is_on(self):
+        try:
+            return int(self.get_value()) > 0
+        except (TypeError, ValueError):
+            return False
+
+    def get_duration(self):
+        return int(math.floor((time.time() - self.get_time()) / 60.0))
 
 
 def set_lights(room, action):

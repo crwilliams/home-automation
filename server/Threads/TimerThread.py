@@ -17,17 +17,8 @@ class TimerThread(threading.Thread):
             for name, limit in Constants.limits.iteritems():
                 try:
                     room = State().rooms[name]
-                    try:
-                        value = int(room.get_value())
-                    except TypeError:
-                        value = 0
-                    except ValueError:
-                        value = 0
-                    if value > 0:
-                        duration = int(
-                            math.floor((time.time() - room.get_time()) / 60.0))
-                        if duration > limit:
-                            self._queue.put((name, 0))
+                    if room.is_on() and room.get_duration() > limit:
+                        self._queue.put((name, 0))
                 except ValueError:
                     pass
             time.sleep(60)
