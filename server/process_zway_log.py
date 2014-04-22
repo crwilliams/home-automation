@@ -82,14 +82,9 @@ def set_lights(room, action):
         return False
 
     if device[2] == 'SwitchMultilevel' or device[2] == 'SwitchBinary':
-        if action == 'on':
-            action = 255
-        elif action == 'off':
-            action = 0
+        action = get_valid_action(action)
 
-        action = int(action)
-
-        if action == 255 or 0 <= action <= 100:
+        if action is not None:
             call_zwave_api_set(device[0], device[1], device[2], action)
             return True
         else:
@@ -101,6 +96,20 @@ def set_lights(room, action):
             SERIAL.write(command)
         except NameError:
             print 'No serial device, cannot send command %s ' % command
+
+
+def get_valid_action(action):
+    if action == 'on':
+        action = 255
+    elif action == 'off':
+        action = 0
+
+    action = int(action)
+
+    if action == 255 or 0 <= action <= 100:
+        return action
+    else:
+        return None
 
 
 def call_zwave_api_get(device, instance, command_class, value):
