@@ -10,11 +10,11 @@ class OutboundThread(threading.Thread):
     def __init__(self, queue):
         threading.Thread.__init__(self)
         self.daemon = True
-        self.queue = queue
+        self._queue = queue
 
     def run(self):
         while True:
-            message = self.queue.get(True)
+            message = self._queue.get(True)
             send_push(message[0], message[1], message[2], message[3])
 
 

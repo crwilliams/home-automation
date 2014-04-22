@@ -10,7 +10,7 @@ class TimerThread(threading.Thread):
     def __init__(self, queue):
         threading.Thread.__init__(self)
         self.daemon = True
-        self.queue = queue
+        self._queue = queue
 
     def run(self):
         while True:
@@ -27,7 +27,7 @@ class TimerThread(threading.Thread):
                         duration = int(
                             math.floor((time.time() - room.get_time()) / 60.0))
                         if duration > limit:
-                            self.queue.put((name, 0))
+                            self._queue.put((name, 0))
                 except ValueError:
                     pass
             time.sleep(60)

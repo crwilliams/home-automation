@@ -12,8 +12,8 @@ class StandardInputReaderThread(threading.Thread):
     def __init__(self, in_queue, out_queue):
         threading.Thread.__init__(self)
         self.daemon = True
-        self.level_processor = LevelProcessor(in_queue, out_queue)
-        self.val_processor = ValProcessor()
+        self._level_processor = LevelProcessor(in_queue, out_queue)
+        self._val_processor = ValProcessor()
 
     def run(self):
         while True:
@@ -21,8 +21,8 @@ class StandardInputReaderThread(threading.Thread):
             if not line:
                 break
 
-            self.level_processor.process(line)
-            self.val_processor.process(line)
+            self._level_processor.process(line)
+            self._val_processor.process(line)
 
 
 class Processor(object):
@@ -42,8 +42,8 @@ class Processor(object):
 class LevelProcessor(Processor):
     def __init__(self, in_queue, out_queue):
         Processor.__init__(self)
-        self.in_queue = in_queue
-        self.out_queue = out_queue
+        self._in_queue = in_queue
+        self._out_queue = out_queue
         self.set_pattern(''.join([
             self.timestamp_format,
             r' SETDATA ',
@@ -83,20 +83,20 @@ class LevelProcessor(Processor):
                         if room_name == 'philio-fix':
                             philio_fix(match_dict['device'])
                             return
-                        self.process_rules(room_name, match_dict['value'])
-                        self.out_queue.put((
+                        self._process_rules(room_name, match_dict['value'])
+                        self._out_queue.put((
                             room_name, match_dict['value'],
                             Constants.config[room_name][2],
                             int(current_update_time)))
             else:
                 print 'Error processing %s: %s' % (key, match_dict)
 
-    def process_rules(self, room_name, value):
+    def _process_rules(self, room_name, value):
         for rule in Constants.rules:
             if rule[0] == room_name and rule[1] == value:
                 print ' '.join([
                     rule[0], rule[1], 'triggers', rule[2], rule[3]])
-                self.in_queue.put((rule[2], rule[3]))
+                self._in_queue.put((rule[2], rule[3]))
 
 
 class ValProcessor(Processor):
