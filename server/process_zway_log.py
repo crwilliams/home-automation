@@ -79,11 +79,7 @@ def set_lights(room, action):
         action = int(action)
 
         if action == 255 or 0 <= action <= 100:
-            url = (
-                'http://127.0.0.1:8083/ZWaveAPI/Run/'
-                'devices[%s].instances[%s].%s.Set(%s)' % (
-                    device[0], device[1], device[2], action))
-            urllib2.urlopen(url)
+            call_zwave_api_set(device[0], device[1], device[2], action)
             return True
         else:
             return False
@@ -94,6 +90,22 @@ def set_lights(room, action):
             SERIAL.write(command)
         except NameError:
             print 'No serial device, cannot send command %s ' % command
+
+
+def call_zwave_api_get(device, instance, command_class, value):
+    host = '127.0.0.1'
+    port = '8083'
+    url = 'http://%s:%s/ZWaveAPI/Run/devices[%s].instances[%s].%s.Get()' % (
+        host, port, device, instance, command_class)
+    urllib2.urlopen(url)
+
+
+def call_zwave_api_set(device, instance, command_class, value):
+    host = '127.0.0.1'
+    port = '8083'
+    url = 'http://%s:%s/ZWaveAPI/Run/devices[%s].instances[%s].%s.Set(%s)' % (
+        host, port, device, instance, command_class, value)
+    urllib2.urlopen(url)
 
 
 try:

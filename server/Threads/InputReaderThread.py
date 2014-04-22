@@ -2,10 +2,9 @@ import re
 import sys
 import threading
 import time
-import urllib2
 
 from constants import Constants
-from process_zway_log import State
+from process_zway_log import State, call_zwave_api_get
 
 
 class InputReaderThread(threading.Thread):
@@ -144,8 +143,4 @@ class ValProcessor(Processor):
 
 def philio_fix(device):
     for instance in [2, 3]:
-        url = (
-            'http://127.0.0.1:8083/ZWaveAPI/Run/'
-            'devices[%s].instances[%s].commandClasses[37].Get()' % (
-                device, instance))
-        urllib2.urlopen(url)
+        call_zwave_api_get(device, instance, 'commandClasses[37]')
