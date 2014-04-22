@@ -41,3 +41,4 @@ class Constants(object):
         None: [],
     }
     input_log_filename = '/tmp/Z-Way.log'
+    city = 'London'

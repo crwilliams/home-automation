@@ -115,7 +115,7 @@ def main():
         input_queue, output_queue, Constants.input_log_filename).start()
     ExternalQueueReaderThread(input_queue).start()
     OutboundThread(output_queue).start()
-    EphemerisThread(input_queue, 'London').start()
+    EphemerisThread(input_queue, Constants.city).start()
     TimerThread(input_queue).start()
     InboundThread(input_queue).run()  # This thread is being run as the parent.
 
