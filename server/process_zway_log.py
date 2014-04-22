@@ -106,10 +106,6 @@ def main():
     input_queue = Queue()
     output_queue = Queue()
 
-    for room, room_config in Constants.config.iteritems():
-        if room_config[2] == 'HomeEasy':
-            output_queue.put((room, '?', room_config[2], 0))
-
     ServerThread().start()
     FileInputReaderThread(
         input_queue, output_queue, Constants.input_log_filename).start()
