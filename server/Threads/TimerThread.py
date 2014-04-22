@@ -1,12 +1,12 @@
-from constants import Constants
-from process_zway_log import State
 import math
 import threading
 import time
 
+from constants import Constants
+from process_zway_log import State
+
 
 class TimerThread(threading.Thread):
-
     def __init__(self, queue):
         threading.Thread.__init__(self)
         self.daemon = True
@@ -25,7 +25,7 @@ class TimerThread(threading.Thread):
                         value = 0
                     if value > 0:
                         duration = int(
-                            math.floor((time.time() - room.get_time())/60.0))
+                            math.floor((time.time() - room.get_time()) / 60.0))
                         if duration > limit:
                             self.queue.put((name, 0))
                 except ValueError:

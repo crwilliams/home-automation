@@ -1,11 +1,12 @@
-from constants import Constants
-import boto.sns
 import json
 import threading
 
+import boto.sns
+
+from constants import Constants
+
 
 class OutboundThread(threading.Thread):
-
     def __init__(self, queue):
         threading.Thread.__init__(self)
         self.daemon = True

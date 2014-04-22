@@ -1,14 +1,14 @@
-from constants import Constants
-from process_zway_log import State
 import re
 import sys
 import threading
 import time
 import urllib2
 
+from constants import Constants
+from process_zway_log import State
+
 
 class StandardInputReaderThread(threading.Thread):
-
     def __init__(self, in_queue, out_queue):
         threading.Thread.__init__(self)
         self.daemon = True
@@ -26,7 +26,6 @@ class StandardInputReaderThread(threading.Thread):
 
 
 class Processor(object):
-
     def __init__(self):
         self.timestamp_format = (
             r'\[(?P<timestamp>\d{4}-\d{2}-\d{2} '
@@ -41,7 +40,6 @@ class Processor(object):
 
 
 class LevelProcessor(Processor):
-
     def __init__(self, in_queue, out_queue):
         Processor.__init__(self)
         self.in_queue = in_queue
@@ -102,7 +100,6 @@ class LevelProcessor(Processor):
 
 
 class ValProcessor(Processor):
-
     def __init__(self):
         Processor.__init__(self)
         self.set_pattern(''.join([

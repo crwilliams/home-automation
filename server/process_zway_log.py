@@ -1,7 +1,8 @@
 from Queue import Queue
 from collections import defaultdict
-import serial
 import urllib2
+
+import serial
 
 from Threads.EphemerisThread import EphemerisThread
 from Threads.ExternalQueueReaderThread import ExternalQueueReaderThread
@@ -14,7 +15,6 @@ from constants import Constants
 
 
 class State(object):
-
     _instance = None
     rooms = None
     day_or_night = None
@@ -47,7 +47,6 @@ class State(object):
 
 
 class Room(object):
-
     _value = None
     _time = None
 
@@ -66,7 +65,6 @@ class Room(object):
 
 
 def set_lights(room, action):
-
     if room in Constants.config.keys():
         device = Constants.config[room]
     else:
@@ -105,7 +103,6 @@ except OSError:
 
 
 def main():
-
     input_queue = Queue()
     output_queue = Queue()
 

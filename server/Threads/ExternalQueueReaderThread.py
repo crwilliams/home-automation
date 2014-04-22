@@ -1,11 +1,12 @@
-from boto.sqs.message import RawMessage
-from constants import Constants
-import boto.sqs
 import threading
+
+from boto.sqs.message import RawMessage
+import boto.sqs
+
+from constants import Constants
 
 
 class ExternalQueueReaderThread(threading.Thread):
-
     def __init__(self, queue):
         threading.Thread.__init__(self)
         self.daemon = True

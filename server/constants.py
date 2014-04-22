@@ -1,5 +1,4 @@
 class Constants(object):
-
     aws_region = 'aws-region'  # eg us-east-1
     aws_access_key = 'aws-access-key'
     aws_secret_key = 'aws-secret-key'

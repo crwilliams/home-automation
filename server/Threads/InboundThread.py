@@ -1,9 +1,9 @@
-from process_zway_log import set_lights
 import threading
+
+from process_zway_log import set_lights
 
 
 class InboundThread(threading.Thread):
-
     def __init__(self, queue):
         threading.Thread.__init__(self)
         self.daemon = True

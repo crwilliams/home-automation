@@ -1,14 +1,14 @@
 from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
-from constants import Constants
-from process_zway_log import Room, State, set_lights
 from xml.sax.saxutils import XMLGenerator
 import json
 import threading
 import time
 
+from constants import Constants
+from process_zway_log import Room, State, set_lights
+
 
 class ServerThread(threading.Thread):
-
     def __init__(self):
         threading.Thread.__init__(self)
         self.daemon = True
@@ -22,7 +22,6 @@ class ServerThread(threading.Thread):
 
 
 class MyHandler(BaseHTTPRequestHandler):
-
     def __getattr__(self, name):
         if name == 'do_GET':
             return self.do_get
@@ -69,7 +68,6 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
 class HtmlPageGenerator(object):
-
     def __init__(self, xmlgenerator):
         self.gen = xmlgenerator
 
@@ -174,7 +172,6 @@ $(document).ready( function() {
 
 
 class ComplexEncoder(json.JSONEncoder):
-
     def default(self, obj):
         if isinstance(obj, State):
             return obj.get_dict()

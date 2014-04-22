@@ -1,12 +1,13 @@
-from constants import Constants
-from process_zway_log import State
-import ephem
 import threading
 import time
 
+import ephem
+
+from constants import Constants
+from process_zway_log import State
+
 
 class EphemerisThread(threading.Thread):
-
     def __init__(self, queue, city):
         threading.Thread.__init__(self)
         self.daemon = True
