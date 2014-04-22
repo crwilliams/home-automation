@@ -5,6 +5,7 @@ import urllib2
 
 from Threads.EphemerisThread import EphemerisThread
 from Threads.ExternalQueueReaderThread import ExternalQueueReaderThread
+from Threads.InboundThread import InboundThread
 from Threads.OutboundThread import OutboundThread
 from Threads.ServerThread import ServerThread
 from Threads.StandardInputReaderThread import StandardInputReaderThread
@@ -105,23 +106,20 @@ except OSError:
 
 def main():
 
-    ServerThread().start()
-
     input_queue = Queue()
     output_queue = Queue()
-    StandardInputReaderThread(input_queue, output_queue).start()
-    ExternalQueueReaderThread(input_queue).start()
-    OutboundThread(output_queue).start()
-    EphemerisThread(input_queue, 'London').start()
-    TimerThread(input_queue).start()
 
     for room, room_config in Constants.config.iteritems():
         if room_config[2] == 'HomeEasy':
             output_queue.put((room, '?', room_config[2], 0))
 
-    while True:
-        event = input_queue.get(True)
-        set_lights(event[0], event[1])
+    ServerThread().start()
+    StandardInputReaderThread(input_queue, output_queue).start()
+    ExternalQueueReaderThread(input_queue).start()
+    OutboundThread(output_queue).start()
+    EphemerisThread(input_queue, 'London').start()
+    TimerThread(input_queue).start()
+    InboundThread(input_queue).run()  # This thread is being run as the parent.
 
 
 if __name__ == '__main__':
