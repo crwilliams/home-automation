@@ -40,3 +40,4 @@ class Constants(object):
         'HomeEasy': ['off', 'on'],
         None: [],
     }
+    input_log_filename = '/tmp/Z-Way.log'

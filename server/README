@@ -1,6 +1,6 @@
 All configuration should be done via constants.py
 
-To run, tail -f /var/log/Z-Way.log | python process_zway_log.py
+To run, python process_zway_log.py
 
 Contains code from:
 	Bootstrap (Copyright 2013 Twitter, used under Apache 2.0 license)

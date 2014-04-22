@@ -8,8 +8,8 @@ from Threads.EphemerisThread import EphemerisThread
 from Threads.ExternalQueueReaderThread import ExternalQueueReaderThread
 from Threads.InboundThread import InboundThread
 from Threads.OutboundThread import OutboundThread
+from Threads.InputReaderThread import FileInputReaderThread
 from Threads.ServerThread import ServerThread
-from Threads.StandardInputReaderThread import StandardInputReaderThread
 from Threads.TimerThread import TimerThread
 from constants import Constants
 
@@ -111,7 +111,8 @@ def main():
             output_queue.put((room, '?', room_config[2], 0))
 
     ServerThread().start()
-    StandardInputReaderThread(input_queue, output_queue).start()
+    FileInputReaderThread(
+        input_queue, output_queue, Constants.input_log_filename).start()
     ExternalQueueReaderThread(input_queue).start()
     OutboundThread(output_queue).start()
     EphemerisThread(input_queue, 'London').start()

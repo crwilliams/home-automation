@@ -8,7 +8,7 @@ from constants import Constants
 from process_zway_log import State
 
 
-class StandardInputReaderThread(threading.Thread):
+class InputReaderThread(threading.Thread):
     def __init__(self, in_queue, out_queue):
         threading.Thread.__init__(self)
         self.daemon = True
@@ -17,12 +17,28 @@ class StandardInputReaderThread(threading.Thread):
 
     def run(self):
         while True:
-            line = sys.stdin.readline()
+            line = self._input.readline()
             if not line:
                 break
 
-            self._level_processor.process(line)
-            self._val_processor.process(line)
+            self._process(line)
+
+    def _process(self, line):
+        self._level_processor.process(line)
+        self._val_processor.process(line)
+
+
+class FileInputReaderThread(InputReaderThread):
+    def __init__(self, in_queue, out_queue, filename):
+        InputReaderThread.__init__(self, in_queue, out_queue)
+        logfile = open(filename)
+        self._input = logfile
+
+
+class StandardInputReaderThread(InputReaderThread):
+    def __init__(self, in_queue, out_queue):
+        InputReaderThread.__init__(self, in_queue, out_queue)
+        self._input = sys.stdin
 
 
 class Processor(object):
