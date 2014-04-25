@@ -1,9 +1,8 @@
-import math
 import threading
 import time
 
 from constants import Constants
-from process_zway_log import State
+from Data.State import State
 
 
 class TimerThread(threading.Thread):

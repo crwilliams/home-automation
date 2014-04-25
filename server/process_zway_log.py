@@ -1,10 +1,7 @@
 from Queue import Queue
-from collections import defaultdict
 import urllib2
 
-import math
 import serial
-import time
 
 from Threads.EphemerisThread import EphemerisThread
 from Threads.ExternalQueueReaderThread import ExternalQueueReaderThread
@@ -14,65 +11,6 @@ from Threads.InputReaderThread import FileInputReaderThread
 from Threads.ServerThread import ServerThread
 from Threads.TimerThread import TimerThread
 from constants import Constants
-
-
-class State(object):
-    _instance = None
-    rooms = None
-    day_or_night = None
-    init = None
-    log = None
-
-    def __new__(cls):
-        if not cls._instance:
-            cls._instance = super(State, cls).__new__(cls)
-            print 'creating singleton'
-            cls._instance.rooms = defaultdict(Room)
-            cls._instance.init = False
-            cls._instance.log = []
-        return cls._instance
-
-    def get_dict(self):
-        return {
-            'rooms': dict(self.rooms),
-            'day_or_night': self.day_or_night,
-        }
-
-    def log_init(self):
-        self.init = True
-
-    def is_init(self):
-        return self.init
-
-    def add_log_entry(self, timestamp, room, value):
-        self.log.append({'time': timestamp, 'room': room, 'value': value})
-
-
-class Room(object):
-    _value = None
-    _time = None
-
-    def __repr__(self):
-        return str(self._value)
-
-    def update(self, timestamp, value):
-        self._value = value
-        self._time = timestamp
-
-    def get_value(self):
-        return self._value
-
-    def get_time(self):
-        return self._time
-
-    def is_on(self):
-        try:
-            return int(self.get_value()) > 0
-        except (TypeError, ValueError):
-            return False
-
-    def get_duration(self):
-        return int(math.floor((time.time() - self.get_time()) / 60.0))
 
 
 def set_lights(room, action):

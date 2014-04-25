@@ -5,7 +5,9 @@ import threading
 import time
 
 from constants import Constants
-from process_zway_log import Room, State, set_lights
+from Data.Room import Room
+from Data.State import State
+from process_zway_log import set_lights
 
 
 class ServerThread(threading.Thread):
