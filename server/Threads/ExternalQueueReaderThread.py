@@ -1,4 +1,7 @@
+import errno
+import socket.error
 import threading
+import time
 
 from boto.sqs.message import RawMessage
 import boto.sqs
@@ -20,14 +23,21 @@ class ExternalQueueReaderThread(threading.Thread):
 
     def run(self):
         while True:
-            messages = self._remote_queue.get_messages(10, None, None, 20)
+            try:
+                messages = self._remote_queue.get_messages(10, None, None, 20)
 
-            for message in messages:
-                body = message.get_body()
-                print 'Received message from remote queue: %s' % body
-                try:
-                    room, value = body.split('/', 1)
-                    self._queue.put((room, value))
-                except ValueError:
-                    print 'Unable to process message: %s' % body
-                self._remote_queue.delete_message(message)
+                for message in messages:
+                    body = message.get_body()
+                    print 'Received message from remote queue: %s' % body
+                    try:
+                        room, value = body.split('/', 1)
+                        self._queue.put((room, value))
+                    except ValueError:
+                        print 'Unable to process message: %s' % body
+                    self._remote_queue.delete_message(message)
+            except socket.error as socket_error:
+                if socket_error.errno != errno.ECONNREFUSED:
+                    raise socket_error
+                else:
+                    print 'Connection refused'
+                    time.sleep(10)
