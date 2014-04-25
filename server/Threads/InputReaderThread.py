@@ -13,6 +13,7 @@ class InputReaderThread(threading.Thread):
         self.daemon = True
         self._level_processor = LevelProcessor(in_queue, out_queue)
         self._val_processor = ValProcessor()
+        self._input = None
 
     def run(self):
         while True:
