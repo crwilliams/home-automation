@@ -112,7 +112,7 @@ def get_valid_action(action):
         return None
 
 
-def call_zwave_api_get(device, instance, command_class, value):
+def call_zwave_api_get(device, instance, command_class):
     host = '127.0.0.1'
     port = '8083'
     url = 'http://%s:%s/ZWaveAPI/Run/devices[%s].instances[%s].%s.Get()' % (
