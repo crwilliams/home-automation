@@ -1,5 +1,5 @@
 import errno
-import socket.error
+import socket
 import threading
 import time
 
