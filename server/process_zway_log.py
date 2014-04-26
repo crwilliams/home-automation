@@ -2,8 +2,6 @@ from Queue import Queue
 
 import serial
 
-from Data.ZWaveAPI import ZWaveAPI
-
 from Threads.EphemerisThread import EphemerisThread
 from Threads.ExternalQueueReaderThread import ExternalQueueReaderThread
 from Threads.InboundThread import InboundThread
@@ -12,7 +10,6 @@ from Threads.InputReaderThread import FileInputReaderThread
 from Threads.ServerThread import ServerThread
 from Threads.TimerThread import TimerThread
 from constants import Constants
-from Data.State import State
 
 
 try:
@@ -25,7 +22,6 @@ def main():
     input_queue = Queue()
     output_queue = Queue()
 
-    State().zwave_api = ZWaveAPI()
     ServerThread().start()
     FileInputReaderThread(
         input_queue, output_queue, Constants.input_log_filename).start()
