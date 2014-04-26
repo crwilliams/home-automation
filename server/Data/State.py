@@ -1,7 +1,7 @@
 from collections import defaultdict
 
-import Room
-import ZWaveAPI
+from Room import Room
+from ZWaveAPI import ZWaveAPI
 
 
 class State(object):
@@ -19,7 +19,7 @@ class State(object):
             cls._instance.rooms = defaultdict(Room)
             cls._instance.init = False
             cls._instance.log = []
-            cls._instance.zwave_api = ZWaveAPI
+            cls._instance.zwave_api = ZWaveAPI()
         return cls._instance
 
     def get_dict(self):
