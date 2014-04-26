@@ -17,11 +17,13 @@ class InputReaderThread(threading.Thread):
 
     def run(self):
         while True:
+            where = self._input.tell()
             line = self._input.readline()
-            if not line:
-                break
-
-            self._process(line)
+            if line:
+                self._process(line)
+            else:
+                time.sleep(1)
+                self._input.seek(where)
 
     def _process(self, line):
         self._level_processor.process(line)
