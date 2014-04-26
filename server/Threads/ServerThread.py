@@ -2,7 +2,6 @@ from BaseHTTPServer import BaseHTTPRequestHandler, HTTPServer
 from xml.sax.saxutils import XMLGenerator
 import json
 import threading
-import time
 
 from constants import Constants
 from Data.Room import Room
@@ -15,8 +14,6 @@ class ServerThread(threading.Thread):
         self.daemon = True
 
     def run(self):
-        time.sleep(20)
-        State().log_init()
         server = HTTPServer(('', 8080), MyHandler)
         print 'started http server...'
         server.serve_forever()

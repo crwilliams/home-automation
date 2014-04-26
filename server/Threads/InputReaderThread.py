@@ -69,6 +69,7 @@ class LevelProcessor(Processor):
             r'data\.(1\.)?',
             r'level = (?P<value>(\d+|True|False))'
         ]))
+        self._started_time = time.time()
         self.rooms = {}
         for room, room_config in Constants.config.iteritems():
             self.rooms['-'.join([str(x) for x in [
@@ -95,7 +96,7 @@ class LevelProcessor(Processor):
                     State().add_log_entry(
                         int(current_update_time), room_name,
                         match_dict['value'])
-                    if State().is_init():
+                    if current_update_time > self._started_time:
                         if room_name == 'philio-fix':
                             philio_fix(match_dict['device'])
                             return
