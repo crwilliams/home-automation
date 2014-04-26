@@ -7,7 +7,6 @@ import time
 from constants import Constants
 from Data.Room import Room
 from Data.State import State
-from process_zway_log import set_lights
 
 
 class ServerThread(threading.Thread):
@@ -49,7 +48,7 @@ class MyHandler(BaseHTTPRequestHandler):
             elif path_parts[0] == 'lights':
                 room = path_parts[1]
                 action = path_parts[2]
-                if set_lights(room, action):
+                if State().zwave_api.set_lights(room, action):
                     self.send_response(200)
                     self.send_header('Content-type', 'application/json')
                     self.end_headers()

@@ -5,7 +5,6 @@ import time
 
 from constants import Constants
 from Data.State import State
-from process_zway_log import call_zwave_api_get
 
 
 class InputReaderThread(threading.Thread):
@@ -145,4 +144,4 @@ class ValProcessor(Processor):
 
 def philio_fix(device):
     for instance in [2, 3]:
-        call_zwave_api_get(device, instance, 'commandClasses[37]')
+        State().zwave_api.get(device, instance, 'commandClasses[37]')

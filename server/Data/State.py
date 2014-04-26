@@ -9,6 +9,7 @@ class State(object):
     day_or_night = None
     init = None
     log = None
+    zwave_api = None
 
     def __new__(cls):
         if not cls._instance:

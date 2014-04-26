@@ -1,6 +1,6 @@
 import threading
 
-from process_zway_log import set_lights
+from Data.State import State
 
 
 class InboundThread(threading.Thread):
@@ -12,4 +12,4 @@ class InboundThread(threading.Thread):
     def run(self):
         while True:
             event = self._queue.get(True)
-            set_lights(event[0], event[1])
+            State().zwave_api.set_lights(event[0], event[1])
