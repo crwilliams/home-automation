@@ -116,8 +116,11 @@ class HtmlPageGenerator(object):
         self.gen.startElement('table', {})
 
         for room, room_config in Constants.config.iteritems():
-            self.output_row(
-                room, Constants.values[room_config[2]])
+            try:
+                self.output_row(
+                    room, Constants.values[room_config[2]])
+            except KeyError:
+                pass
 
         self.gen.endElement('table')
         self.gen.endElement('form')
@@ -142,15 +145,16 @@ class HtmlPageGenerator(object):
         self.gen.endElement('link')
 
     def output_row(self, room, actions):
-        self.gen.startElement('tr', {})
-        self.gen.startElement('td', {})
-        self.gen.characters(room)
-        self.gen.endElement('td')
-        self.gen.startElement('td', {})
-        for action in actions:
-            self.output_button(room, action)
-        self.gen.endElement('td')
-        self.gen.endElement('tr')
+        if len(actions):
+            self.gen.startElement('tr', {})
+            self.gen.startElement('td', {})
+            self.gen.characters(room)
+            self.gen.endElement('td')
+            self.gen.startElement('td', {})
+            for action in actions:
+                self.output_button(room, action)
+            self.gen.endElement('td')
+            self.gen.endElement('tr')
 
     def output_button(self, room, action):
         self.gen.startElement('button', {
