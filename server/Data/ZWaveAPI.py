@@ -26,7 +26,7 @@ class ZWaveAPI(object):
         else:
             return False
 
-        if device[2] == 'SwitchMultilevel' or device[2] == 'SwitchBinary':
+        if device[2] in ['SwitchMultilevel', 'SwitchBinary']:
             action = get_valid_action(action)
 
             if action is not None:
