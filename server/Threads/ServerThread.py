@@ -78,9 +78,9 @@ class MyHandler(BaseHTTPRequestHandler):
         gen = XMLGenerator(self.wfile, 'utf-8')
         gen.startDocument()
         gen.startElement('html', {'lang': 'en'})
-        htmlgen = HtmlPageGenerator(gen)
-        htmlgen.output_head()
-        htmlgen.output_body()
+        html_generator = HtmlPageGenerator(gen)
+        html_generator.output_head()
+        html_generator.output_body()
         gen.endElement('html')
         gen.endDocument()
 
@@ -88,16 +88,16 @@ class MyHandler(BaseHTTPRequestHandler):
         gen = XMLGenerator(self.wfile, 'utf-8')
         gen.startDocument()
         gen.startElement('html', {'lang': 'en'})
-        htmlgen = HtmlPhotoPageGenerator(gen)
-        htmlgen.output_head()
-        htmlgen.output_body()
+        html_generator = HtmlPhotoPageGenerator(gen)
+        html_generator.output_head()
+        html_generator.output_body()
         gen.endElement('html')
         gen.endDocument()
 
 
 class HtmlPageGenerator(object):
-    def __init__(self, xmlgenerator):
-        self.gen = xmlgenerator
+    def __init__(self, xml_generator):
+        self.gen = xml_generator
 
     def output_head(self):
         self.gen.startElement('head', {})
