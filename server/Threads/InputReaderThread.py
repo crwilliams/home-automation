@@ -140,6 +140,9 @@ class ValProcessor(Processor):
             if int(match_dict['d']) == 1:
                 State().add_log_entry(
                     int(update_time), 'temperature', match_dict['value'])
+            if int(match_dict['d']) == 3:
+                State().add_log_entry(
+                    int(update_time), 'luminance', match_dict['value'])
             if int(match_dict['d']) == 5:
                 State().add_log_entry(
                     int(update_time), 'humidity', match_dict['value'])
