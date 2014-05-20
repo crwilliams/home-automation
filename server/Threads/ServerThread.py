@@ -26,6 +26,9 @@ class MyHandler(BaseHTTPRequestHandler):
         if name == 'do_GET':
             return self.do_get
 
+    def log_message(self, f, *args):
+        return
+
     def do_get(self):
         try:
             path_parts = self.path.lstrip('/').split('/')
