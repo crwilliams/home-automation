@@ -65,7 +65,7 @@ class LevelProcessor(Processor):
         self.set_pattern(''.join([
             self.timestamp_format,
             r' SETDATA ',
-            r'devices\.(?P<device>\d)\.',
+            r'devices\.(?P<device>\d+)\.',
             r'instances\.(?P<instance>\d)\.',
             r'commandClasses\.(?P<cc>(37|38|48))\.',
             r'data\.(1\.)?',
@@ -124,7 +124,7 @@ class ValProcessor(Processor):
         self.set_pattern(''.join([
             self.timestamp_format,
             r' SETDATA ',
-            r'devices\.(?P<device>\d)\.',
+            r'devices\.(?P<device>\d+)\.',
             r'instances\.(?P<instance>\d)\.',
             r'commandClasses\.49\.',
             r'data\.(?P<d>\d)\.',
