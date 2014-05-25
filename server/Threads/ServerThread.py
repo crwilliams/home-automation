@@ -217,8 +217,8 @@ class HtmlPhotoPageGenerator(object):
     def output_body(self):
         self.gen.startElement('body', {
             'onload': 'startup()',
-            'style': 'text-align: center',
             'onclick': 'openForm()',
+            'style': 'text-align: center; background-color: black',
         })
         self.gen.startElement('img', {
             'id': 'photo',
