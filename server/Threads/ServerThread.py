@@ -246,13 +246,13 @@ class HtmlPhotoPageGenerator(object):
         self.gen.startElement('input', {
             'type': 'button',
             'value': 'dim',
-            'onclick': 'dim(); return false;',
+            'onclick': 'dim(); event.stopPropagation();',
             'style': 'width: 10%;',
         })
         self.gen.startElement('input', {
             'type': 'button',
             'value': 'close',
-            'onclick': 'closeForm(); return false;',
+            'onclick': 'closeForm(); event.stopPropagation();',
             'style': 'width: 90%;',
         })
         self.gen.endElement('input')
@@ -330,7 +330,7 @@ img {
             'type': 'button',
             'id': '%s-%s' % (room, action_name),
             'value': action_name.upper(),
-            'onclick': 'set("%s", "%s"); return false;' % (room, action)})
+            'onclick': 'set("%s", "%s"); event.stopPropagation();' % (room, action)})
         self.gen.endElement('input')
 
     def output_scripts(self):
