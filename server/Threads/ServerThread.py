@@ -367,7 +367,7 @@ function openForm()
 
 function actuallyOpenForm()
 {
-    document.getElementById('lights').style.display = 'block';
+    document.getElementById('lights').style.display = 'table';
 }
 
 function dim()
@@ -428,7 +428,7 @@ function checkStatus(postprocess)
         if (postprocess !== undefined) {
             postprocess();
         }
-        if (document.getElementById('lights').style.display == 'block') {
+        if (document.getElementById('lights').style.display == 'table') {
             setTimeout(checkStatus, 1000);
         }
     }
