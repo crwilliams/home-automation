@@ -360,14 +360,12 @@ function openForm()
 
 function actuallyOpenForm()
 {
-    document.getElementById('photo').style.zIndex = '1';
-    document.getElementById('lights').style.zIndex = '2';
+    document.getElementById('lights').style.display = 'block';
 }
 
 function closeForm()
 {
-    document.getElementById('lights').style.zIndex = '1';
-    document.getElementById('photo').style.zIndex = '2';
+    document.getElementById('lights').style.display = 'none';
 }
 
 function updatePhoto()
@@ -413,7 +411,7 @@ function checkStatus(postprocess)
         if (postprocess !== undefined) {
             postprocess();
         }
-        if (document.getElementById('photo').style.zIndex == '1') {
+        if (document.getElementById('lights').style.display == 'block') {
             setTimeout(checkStatus, 1000);
         }
     }
