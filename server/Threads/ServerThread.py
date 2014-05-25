@@ -218,6 +218,7 @@ class HtmlPhotoPageGenerator(object):
         self.gen.startElement('body', {
             'onload': 'startup()',
             'style': 'text-align: center',
+            'onclick': 'openForm()',
         })
         self.gen.startElement('img', {
             'id': 'photo',
@@ -245,9 +246,15 @@ class HtmlPhotoPageGenerator(object):
         })
         self.gen.startElement('input', {
             'type': 'button',
+            'value': 'dim',
+            'onclick': 'dim()',
+            'style': 'width: 10%;',
+        })
+        self.gen.startElement('input', {
+            'type': 'button',
             'value': 'close',
             'onclick': 'closeForm()',
-            'style': 'width: 100%;',
+            'style': 'width: 90%;',
         })
         self.gen.endElement('input')
         self.gen.endElement('td')
@@ -355,12 +362,19 @@ function set(room, mode)
 
 function openForm()
 {
+    document.getElementById('photo').style.display = 'block';
     checkStatus(actuallyOpenForm);
 }
 
 function actuallyOpenForm()
 {
     document.getElementById('lights').style.display = 'block';
+}
+
+function dim()
+{
+    document.getElementById('photo').style.display = 'none';
+    closeForm();
 }
 
 function closeForm()
@@ -370,7 +384,11 @@ function closeForm()
 
 function updatePhoto()
 {
-    document.getElementById('photo').src = '/photo.jpg/' + new Date().getTime();
+    var photo = document.getElementById('photo');
+    if(photo.style.display == 'block')
+    {
+        photo.src = '/photo.jpg/' + new Date().getTime();
+    }
 }
 
 function startup()
