@@ -361,7 +361,7 @@ function set(room, mode)
 
 function openForm()
 {
-    document.getElementById('photo').style.display = 'block';
+    document.getElementById('photo').style.display = 'inline-block';
     checkStatus(actuallyOpenForm);
 }
 
@@ -384,7 +384,7 @@ function closeForm()
 function updatePhoto()
 {
     var photo = document.getElementById('photo');
-    if(photo.style.display == 'block')
+    if(photo.style.display == 'inline-block')
     {
         photo.src = '/photo.jpg/' + new Date().getTime();
     }
